@@ -1,0 +1,17 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model MoviesHilton.Models.MovieForm
+
+@if (Model.Rating == "R")
+{
+    <h2>I hope that movie was worth it.</h2>
+}
+else
+{
+    <h2>Your Movie has been submitted.</h2>
+    <h3>Thank you.</h3>
+}
