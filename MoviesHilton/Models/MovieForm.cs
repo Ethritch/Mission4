@@ -11,8 +11,10 @@ namespace MoviesHilton.Models
         [Key]
         [Required]
         public int MovieId { get; set; }
+        //Build the Foreign Key Relationship
+        public int CategoryId { get; set; }
         [Required]
-        public string Category { get; set; }
+        public Category Category { get; set; }
         [Required]
         public string Title { get; set; }
         [Required]

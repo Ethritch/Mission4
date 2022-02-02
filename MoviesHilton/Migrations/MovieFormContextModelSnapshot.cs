@@ -15,15 +15,70 @@ namespace MoviesHilton.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.22");
 
+            modelBuilder.Entity("MoviesHilton.Models.Category", b =>
+                {
+                    b.Property<int>("CategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CategoryName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("CategoryId");
+
+                    b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = 1,
+                            CategoryName = "Action/Adventure"
+                        },
+                        new
+                        {
+                            CategoryId = 2,
+                            CategoryName = "Comedy"
+                        },
+                        new
+                        {
+                            CategoryId = 3,
+                            CategoryName = "Drama"
+                        },
+                        new
+                        {
+                            CategoryId = 4,
+                            CategoryName = "Family"
+                        },
+                        new
+                        {
+                            CategoryId = 5,
+                            CategoryName = "Horror/Suspense"
+                        },
+                        new
+                        {
+                            CategoryId = 6,
+                            CategoryName = "Miscellaneous"
+                        },
+                        new
+                        {
+                            CategoryId = 7,
+                            CategoryName = "Television"
+                        },
+                        new
+                        {
+                            CategoryId = 8,
+                            CategoryName = "VHS"
+                        });
+                });
+
             modelBuilder.Entity("MoviesHilton.Models.MovieForm", b =>
                 {
                     b.Property<int>("MovieId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Director")
                         .IsRequired()
@@ -53,13 +108,15 @@ namespace MoviesHilton.Migrations
 
                     b.HasKey("MovieId");
 
+                    b.HasIndex("CategoryId");
+
                     b.ToTable("Movies");
 
                     b.HasData(
                         new
                         {
                             MovieId = 1,
-                            Category = "Action/Adventure",
+                            CategoryId = 1,
                             Director = "Peter Jackson",
                             Edited = false,
                             Rating = "PG-13",
@@ -69,7 +126,7 @@ namespace MoviesHilton.Migrations
                         new
                         {
                             MovieId = 2,
-                            Category = "Comedy",
+                            CategoryId = 2,
                             Director = "John Landis",
                             Edited = false,
                             Rating = "PG",
@@ -79,13 +136,22 @@ namespace MoviesHilton.Migrations
                         new
                         {
                             MovieId = 3,
-                            Category = "Adventure/Comedy/Sci-Fi",
+                            CategoryId = 2,
                             Director = "Dean Parisot",
                             Edited = false,
                             Rating = "PG",
                             Title = "Galaxy Quest",
                             Year = "1999"
                         });
+                });
+
+            modelBuilder.Entity("MoviesHilton.Models.MovieForm", b =>
+                {
+                    b.HasOne("MoviesHilton.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

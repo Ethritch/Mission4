@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MoviesHilton.Models;
 using System;
@@ -11,15 +12,15 @@ namespace MoviesHilton.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        
 
-        private MovieFormContext _blahContext { get; set; }
+        private MovieFormContext _MfContext { get; set; }
 
         //Constructor
-        public HomeController(ILogger<HomeController> logger, MovieFormContext someName)
+        public HomeController(MovieFormContext someName)
         {
-            _logger = logger;
-            _blahContext = someName;
+            
+            _MfContext = someName;
 
         }
 
@@ -30,6 +31,8 @@ namespace MoviesHilton.Controllers
         [HttpGet]
         public IActionResult Movies()
         {
+            ViewBag.Categories = _MfContext.Categories.ToList();
+
             return View();
         }
         [HttpPost]
@@ -37,26 +40,71 @@ namespace MoviesHilton.Controllers
         {
             if(!ModelState.IsValid)
             {
-                return View();
+                _MfContext.Add(ar);
+                _MfContext.SaveChanges();
+                return View("Confirmation", ar);
             }
-            _blahContext.Add(ar);
-            _blahContext.SaveChanges();
-            return View("Confirmation", ar);
+            else
+            {
+                ViewBag.Categories = _MfContext.Categories.ToList();
+
+                return View(ar);
+
+            }
         }
         public IActionResult Podcast()
         {
             return View();
         }
 
-        public IActionResult Privacy()
+        [HttpGet]
+        public IActionResult MovieList ()
         {
-            return View();
+            var form = _MfContext.Movies
+                .Include(x => x.Category)
+                .OrderBy(x => x.Title).ToList();
+
+            return View(form);
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpGet]
+        public IActionResult Edit (int movieid)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            ViewBag.Categories = _MfContext.Categories.ToList();
+
+            var form = _MfContext.Movies.Single(x => x.MovieId == movieid);
+
+            return View("Movies", form);
         }
+
+        [HttpPost]
+        public IActionResult Edit (MovieForm blah)
+        {
+            _MfContext.Update(blah);
+            _MfContext.SaveChanges();
+
+            return RedirectToAction("MovieList");
+
+        }
+
+        [HttpGet]
+        public IActionResult Delete (int movieid)
+        {
+            var form = _MfContext.Movies.Single(x => x.MovieId == movieid);
+
+            return View(form);
+        }
+
+        [HttpPost]
+        public IActionResult Delete (MovieForm ar)
+        {
+            _MfContext.Movies.Remove(ar);
+            _MfContext.SaveChanges();
+
+            return RedirectToAction("MovieList");
+        }
+
+
     }
 }
+ 
